@@ -1,0 +1,38 @@
+{
+	"files.eol": "\n",
+	"html.format.endWithNewline": true,
+	"html.format.maxPreserveNewLines": 1,
+	"files.trimTrailingWhitespace": true,
+	"editor.trimAutoWhitespace": true,
+	"editor.autoIndent": true,
+	"editor.detectIndentation": false,
+	"eslint.autoFixOnSave": true,
+	"eslint.enable": true,
+	"eslint.run": "onType",
+	"eslint.validate": [
+		{
+			"language": "vue",
+			"autoFix": true
+		},
+		{
+			"language": "html",
+			"autoFix": true
+		},
+		{
+			"language": "javascript",
+			"autoFix": true
+		},
+		{
+			"language": "javascriptreact",
+			"autoFix": true
+		},
+	],
+	"vetur.format.defaultFormatter.js": "vscode-typescript",
+	"vetur.format.defaultFormatter.html": "none",
+	"editor.tabSize": 4,
+	"editor.insertSpaces": false,
+	"vetur.format.options.tabSize": 4,
+	"vetur.format.options.useTabs": true,
+	"vetur.validation.template": false,
+	"typescript.tsdk": "node_modules\\typescript\\lib",
+}
