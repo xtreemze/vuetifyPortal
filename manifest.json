@@ -1,6 +1,6 @@
 {
-  "name": "vuetify-filtering-example",
-  "short_name": "vuetify-filtering-example",
+  "name": "customer-portal",
+  "short_name": "customer-portal",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
