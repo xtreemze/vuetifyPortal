@@ -3,68 +3,79 @@
 		flat
 		>
 		<VResponsive>
-			<VCardTitle
-				class="title"
-				>
-				<VFlex>
-					{{ name }}
-				</VFlex>
-
-				<VFlex
-					pt-2
-					xs12
+			<VFlex shrink>
+				<VCardTitle
+					class="title"
 					>
-					<span class="display-1 font-weight-medium ">
-						{{ price }}
-					</span>
-					<span class="caption ml-0">
-						SEK/mo
-					</span>
-				</VFlex>
+					<VFlex>
+						{{ name }}
+					</VFlex>
 
-				<VFlex
-					v-for="(item, index) in multiCategory"
-					:key="index"
-					shrink
-					>
-					<VIcon
-						small
-						class="pb-1 grey--text text--lighten-2"
+					<VFlex
+						pt-1
+						pb-0
+						xs12
 						>
-						{{ item === 'internet' ? 'network_check' : '' }}
-						{{ item === 'telephony' ? 'phone_in_talk' : '' }}
-						{{ item === 'television' ? 'live_tv' : '' }}
-					</VIcon>
-				</VFlex>
-				<VSpacer />
-				<VFlex
+						<span class="display-1 font-weight-medium ">
+							{{ price }}
+						</span>
+						<span class="caption ml-0">
+							SEK/mo 		<span class=" ml-2 title font-weight-bold">
+								{{ setupFee }}
+								<span class="caption ml-0">
+									setup
+								</span>
+							</span>
+						</span>
+					</VFlex>
 
-					xs12
-					>
-					<h6
-						class="grey--text text--lighten-2"
-						>
-						<VIcon
-							small
+					<VFlex xs12>
+						<VLayout
+							row
+							wrap
 							>
-							{{ multiCategory.includes('internet') ? 'slow_motion_video':"signal_cellular_connected_no_internet_0_bar" }}
-						</VIcon>
+							<VFlex
+								v-for="(item, index) in multiCategory"
+								:key="index"
+								shrink
+								>
+								<VIcon
+									small
+									class="pb-1 grey--text text--lighten-2"
+									>
+									{{ item === 'internet' ? 'network_check' : '' }}
+									{{ item === 'telephony' ? 'phone_in_talk' : '' }}
+									{{ item === 'television' ? 'live_tv' : '' }}
+								</VIcon>
+							</VFlex>
+						</VLayout>
+					</VFlex>
 
-						{{ multiCategory.includes('internet') ? bandwidth + ' Mbps':"" }}
-					</h6>
-				</VFlex>
-				<VFlex xs12>
-					<h6 class="grey--text">
-						{{ provider }}
-					</h6>
-				</VFlex>
-			</VCardTitle>
+					<VFlex shrink>
+						<h6
+							class="grey--text text--lighten-2"
+							>
+							<VIcon
+								small
+								:color="multiCategory.includes('internet')? '' : 'transparent' "
+								>
+								slow_motion_video
+							</VIcon>
+
+							{{ multiCategory.includes('internet') ? bandwidth + ' Mbps': "&nbsp;" }}
+						</h6>
+					</VFlex>
+				</VCardTitle>
+			</VFlex>
+
 			<VSlideYReverseTransition>
 				<VCardText
 					v-show="showDescription"
 					class="caption secondary lighten-1  grey--text text--lighten-2 v-card--reveal cardDescription"
 					>
-					<p />
+					<p>
+						Provided by: {{ provider }}
+					</p>
 					<p>
 						{{ description }}
 					</p>
@@ -80,6 +91,20 @@
 		</VResponsive>
 
 		<VCardActions>
+			<VBtn
+				flat
+				disabled
+				small
+				>
+				<VImg
+					contain
+					:class="{greyScale: userLoggedIn} "
+					max-height="30"
+					:src="providerLogo"
+					:alt="provider"
+					/>
+			</VBtn>
+
 			<VSpacer />
 
 			<VBtn
@@ -94,10 +119,10 @@
 			</VBtn>
 
 			<VBtn
-				:color="addedToCart === false ? 'primary': 'info'"
+				:color="userLoggedIn? addedToCart === false ? 'primary': 'info' : 'grey'"
 				flat
 				icon
-				@click.stop="toCart"
+				@click.stop="toCart()"
 				>
 				<VIcon>
 					{{ addedToCart === false ? 'add_shopping_cart' : 'shopping_cart' }}
@@ -114,6 +139,7 @@ export default {
 	model: { prop: 'selectedArray', event: 'change' },
 
 	props: {
+		userLoggedIn: { type: Boolean, default: null },
 		selectedArray: { type: Boolean, default: null },
 		subscriptionType: { type: String, default: null },
 		addedToCart: { type: Boolean, default: false },
@@ -124,6 +150,9 @@ export default {
 		channels: { type: Number, default: null },
 		description: { type: String, default: null },
 		price: { type: Number, default: null },
+		setupFee: { type: Number, default: null },
+		picture: { type: String, default: null },
+		providerLogo: { type: String, default: null },
 		provider: { type: String, default: null },
 		link: { type: String, default: null },
 		multiCategory: { type: Array, default: null }
@@ -132,7 +161,8 @@ export default {
 
 		return {
 			showDescription: false,
-			toggled: false		};
+			toggled: false
+		};
 
 	},
 	methods: {
@@ -154,37 +184,35 @@ export default {
 		},
 		toCart() {
 
-			if (this.addedToCart === true) {
+			if (this.userLoggedIn === false) {
 
+				this.$emit('error', true);
+
+			}
+			else if (this.addedToCart === true) {
+
+				this.showDescription = false;
 				this.$emit('change', null);
 
 			} else {
 
 				this.$emit('change', true);
 
-				this.$nextTick(() => {
-
-					document.getElementById('orderCard' + this.id).scrollIntoView({ behavior: "smooth" });
-
+				this.$vuetify.goTo('#cart', {
+					duration: 2000,
+					offset: 100,
+					easing: 'easeInOutQuint'
 				});
 
 			}
 
 		}
-
 	}
 
 };
 </script>
 
 <style>
-.gradientBackground {
-	background: linear-gradient(
-		0deg,
-		rgba(0, 0, 0, 0.2) 0%,
-		rgba(0, 0, 0, 0.9) 100%
-	);
-}
 
 .transparent {
 	background: none;
@@ -201,4 +229,13 @@ export default {
 	overflow-y: auto;
 	height: 100%;
 }
+
+.greyScale {
+	filter: grayscale(72%);
+	/* filter: brightness(70%); */
+	/* background: grey;
+	padding: 4px;
+	border-radius: 6px; */
+}
+
 </style>

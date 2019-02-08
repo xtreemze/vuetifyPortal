@@ -23,13 +23,13 @@
 				<VBtn
 					flat
 					color="white"
-					href="tel:+0419995050"
+					href="tel:+0416585050"
 					class="title"
 					>
 					<VIcon>
 						phone
 					</VIcon>
-					+0419-995050
+					+0416-585050
 				</VBtn>
 
 				<div
@@ -47,7 +47,11 @@
 					Welcome!
 				</div>
 				<div class="font-weight-light">
-					Type in your desired service address below to search for available subscriptions. If you encounter any difficulty, give us a call!
+					<p>
+						Type in your desired service address below to search for available subscriptions.
+						<br>
+						If you encounter any difficulty, give us a call!
+					</p>
 				</div>
 			</VFlex>
 			<VFlex xs4>
@@ -141,5 +145,4 @@ export default {
 	height: calc((100vh / 3));
 	min-height: 300px;
 }
-
 </style>
