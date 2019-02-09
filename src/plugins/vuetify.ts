@@ -9,7 +9,7 @@ Vue.use(Vuetify, {
 		secondary: "#424242",
 		accent: "#82B1FF",
 		error: "#FF5252",
-		info: "#8a3afa",
+		info: "#6a54dd",
 		success: "#4CAF50",
 		warning: "#FFC107"
 	},
