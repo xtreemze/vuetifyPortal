@@ -64,7 +64,7 @@
 						:flat="createAccountSnackbar"
 
 						color="info"
-						@click.stop=" remainingLoginAttempts = 0; newUserSnackbar = false; newUser = true; loginPrompt = true; stepper = 1;"
+						@click.stop=" emainingLoginAttempts = 0; newUserSnackbar = false; newUser = true; loginPrompt = true; stepper = 1;"
 						>
 						Password reset
 					</VBtn>
@@ -668,7 +668,7 @@
 									block
 									large
 
-									@click="createNewContact()"
+									@click=" ateNewContact()"
 									>
 									<VIcon left>
 										person_add

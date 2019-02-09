@@ -2,10 +2,12 @@ module.exports = {
 	lintOnSave: true,
 
 	pwa: {
-		name: "Customer portal"
+		name: 'Subscriber portal',
+		themeColor: '#fa9700',
+		msTileColor: '#FA9700'
 	},
 
-	baseUrl: '/vuetifyPortal/',
+	publicPath: '/vuetifyPortal/',
 	outputDir: undefined,
 	assetsDir: undefined,
 	runtimeCompiler: undefined,
