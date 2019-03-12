@@ -26,7 +26,7 @@
 					<VBtn
 						:flat="createAccountSnackbar"
 						color="info"
-						@click.stop=" bottomSheet = true; stepper = 0;"
+						@click.stop=" ottomSheet = true; stepper = 0;"
 						>
 						{{ $t("createAccount") }}
 					</VBtn>
@@ -35,7 +35,7 @@
 					<VBtn
 						:flat="createAccountSnackbar"
 						color="info"
-						@click.stop=" remainingLoginAttempts = 0; newUser = true; loginPrompt = true; stepper = 1;"
+						@click.stop=" emainingLoginAttempts = 0; newUser = true; loginPrompt = true; stepper = 1;"
 						>
 						{{ $t("passwordReset") }}
 					</VBtn>
