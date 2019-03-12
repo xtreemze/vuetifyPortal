@@ -26,7 +26,7 @@
 					<VBtn
 						:flat="createAccountSnackbar"
 						color="info"
-						@click.stop=" ottomSheet = true; stepper = 0;"
+						@click.stop=" bottomSheet = true; stepper = 0;"
 						>
 						{{ $t("createAccount") }}
 					</VBtn>
@@ -35,7 +35,7 @@
 					<VBtn
 						:flat="createAccountSnackbar"
 						color="info"
-						@click.stop=" emainingLoginAttempts = 0; newUser = true; loginPrompt = true; stepper = 1;"
+						@click.stop=" remainingLoginAttempts = 0; newUser = true; loginPrompt = true; stepper = 1;"
 						>
 						{{ $t("passwordReset") }}
 					</VBtn>
@@ -919,14 +919,14 @@ export default {
 					const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 					return pattern.test(value) || this.$t('invalidEmail');
-				
+
 				},
 				phone: value => {
 
 					const pattern = /^\+((?:9[679]|8[035789]|6[789]|5[90]|42|3[578]|2[1-689])|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[70]|7|1)(?:\W*\d){0,13}\d$/g;
 
 					return pattern.test(value) || this.$t('phoneValidation');
-				
+
 				}
 				,
 				social: value => {
@@ -934,7 +934,7 @@ export default {
 					const pattern = /^(19|20)?(\d{6}([-+]|\s)\d{4}|(?!19|20)\d{10})$/;
 
 					return pattern.test(value) || this.$t('invalidNumber');
-				
+
 				}
 				,
 				password: value => {
@@ -942,23 +942,23 @@ export default {
 					const pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
 
 					return pattern.test(value) || this.$t('passwordValidation');
-				
+
 				}
 				,
 				passwordRepeat: value => {
 
 					return (value === this.userLogin.password || value === this.userAccount.password) || this.$t('mismatchPassword');
-				
+
 				}
 			}
 		};
-	
+
 	},
 	computed: {
 		validateAccountCreation(){
 
 			return !((this.validatedFormField[7]) && !((this.userAccount.contactPersons.length < 1) && this.userAccount.type === 'business') && (this.validatedFormField[5]) && (this.validatedFormField[4]) && (this.validatedFormField[3]) && (this.validatedFormField[2]));
-		
+
 		}
 	},
 	watch: {
@@ -967,17 +967,17 @@ export default {
 			const existingAccountIndex = this.existingAccounts.findIndex(account => account.uniqueKey === this.editedAccount.uniqueKey);
 
 			this.existingAccounts[existingAccountIndex] = this.editedAccount;
-		
+
 		},
 		addressSearch: function () {
 
 			this.userAccount.invoiceAddress = this.addressSearch;
-		
+
 		},
 		userRegistrationLogOut: function () {
 
 			this.logOut();
-		
+
 		}
 	},
 	created () {
@@ -985,9 +985,9 @@ export default {
 		this.$nextTick(() => {
 
 			this.newUser = true;
-		
+
 		});
-	
+
 	},
 	methods: {
 		resetUser () {
@@ -1017,44 +1017,44 @@ export default {
 			if (this.$refs.step0) {
 
 				this.$refs.step0.resetValidation();
-			
+
 			}
 			if (this.$refs.step1) {
 
 				this.$refs.step1.resetValidation();
-			
+
 			}
 			if (this.$refs.step2) {
 
 				this.$refs.step2.resetValidation();
-			
+
 			}
 			if (this.$refs.step3) {
 
 				this.$refs.step3.resetValidation();
-			
+
 			}
 			if (this.$refs.step4) {
 
 				this.$refs.step4.resetValidation();
-			
+
 			}
 			if (this.$refs.step5) {
 
 				this.$refs.step5.resetValidation();
-			
+
 			}
 			if (this.$refs.step6) {
 
 				this.$refs.step6.resetValidation();
-			
+
 			}
 			if (this.$refs.step7) {
 
 				this.$refs.step7.resetValidation();
-			
+
 			}
-		
+
 		},
 		resetPassword () {
 
@@ -1063,9 +1063,9 @@ export default {
 				if (account.email && account.email === this.userLogin.email) {
 
 					account.password = this.userLogin.password;
-				
+
 				}
-			
+
 			});
 			this.loginPrompt = false;
 			this.bottomSheet = false;
@@ -1073,7 +1073,7 @@ export default {
 			this.resetUser();
 			this.verifyEmailSnackbar = true;
 			this.remainingLoginAttempts = 3;
-		
+
 		},
 		cancelRegistration () {
 
@@ -1081,7 +1081,7 @@ export default {
 			this.stepper = 0;
 			this.loginPrompt = false;
 			this.bottomSheet = false;
-		
+
 		},
 		logOut () {
 
@@ -1097,9 +1097,9 @@ export default {
 				this.remainingLoginAttempts = 3;
 				this.validatedFormField = [false, false, false, false, false, false, false];
 				this.$emit('change', false);
-			
+
 			}
-		
+
 		},
 		createNewUser () {
 
@@ -1109,7 +1109,7 @@ export default {
 			this.verifyEmailSnackbar = true;
 			this.bottomSheet = false;
 			this.resetUser();
-		
+
 		},
 		createNewContact () {
 
@@ -1126,7 +1126,7 @@ export default {
 				cellphone: '+46 '
 			};
 			this.$refs.step6.resetValidation();
-		
+
 		},
 		verifyEmailPassword () {
 
@@ -1146,7 +1146,7 @@ export default {
 				this.newUser = false;
 				this.loginValidated = true;
 				this.$emit('change', true, this.userAccount);
-			
+
 			} else {
 
 				// log out effect
@@ -1158,9 +1158,9 @@ export default {
 				this.stepper = 0;
 				this.resetUser();
 				this.loginValidated = false;
-			
+
 			}
-		
+
 		}
 	}
 };
