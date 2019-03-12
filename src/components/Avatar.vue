@@ -5,7 +5,6 @@
 		width="width"
 		flat
 		tile
-		@click.stop="newPerson"
 		>
 		<VLayout
 			align-end
@@ -31,33 +30,52 @@
 					</VIcon>
 					+0416-585050
 				</VBtn>
-
-				<div
+				<section
 					class="display-4  font-weight-thin
 					hidden-sm-and-down
 					"
 					>
-					Welcome!
-				</div>
-				<div
+					{{ $t("welcome") }}!
+				</section>
+				<section
 					class="display-3  font-weight-thin
 					hidden-md-and-up
 					"
 					>
-					Welcome!
-				</div>
-				<div class="font-weight-light">
+					{{ $t("welcome") }}!
+				</section>
+				<section class="font-weight-light">
 					<p>
-						Type in your desired service address below to search for available subscriptions.
+						{{ $t("instructions") }}
 						<br>
-						If you encounter any difficulty, give us a call!
+						{{ $t("instructions2") }}
 					</p>
-				</div>
+				</section>
+				<VContainer
+					ma-0
+					pa-0
+					>
+					<VLayout>
+						<VFlex shrink>
+							<VSelect
+								v-model="$i18n.locale"
+								flat
+								:items="langs"
+								item-value="value"
+								item-text="label"
+								:label="$t('language')"
+								prepend-icon="language"
+								color="white"
+								/>
+						</VFlex>
+					</VLayout>
+				</VContainer>
 			</VFlex>
 			<VFlex xs4>
 				<VResponsive
 					:height="width"
 					contain
+					@click.stop="newPerson"
 					>
 					<Avataaar
 						:width="width"
@@ -77,12 +95,9 @@
 		</VLayout>
 	</VCard>
 </template>
-
 <script>
-
 import Avataaar from 'vue-avataaar';
 import * as AvatarProps from './avatarProps';
-
 export default {
 	name: "Avatar",
 	components: { Avataaar },
@@ -90,6 +105,7 @@ export default {
 		width: { default: '52px', type: String }
 	},
 	data: () => ({
+		langs: [{value: 'sv', label: 'Svenska'}, {value: 'en', label: 'English'}], // add new languages here and a .json in the locales folder
 		accessoriesType: '',
 		clotheType: '',
 		eyebrowType: '',
@@ -99,15 +115,27 @@ export default {
 		mouthType: '',
 		skinColor: '',
 		topType: ''
-
 	}),
-
 	created() {
 
 		this.newPerson();
-
+		this.$i18n.locale = this.determineLocale(); // automatic language detection
+	
 	},
 	methods: {
+		determineLocale() {
+
+			if (navigator.languages && navigator.languages.length) {
+
+				return navigator.languages[1];
+			
+			} else {
+
+				return navigator.userLanguage || navigator.language[0] + navigator.language[1] || navigator.browserLanguage || 'en';
+			
+			}
+		
+		},
 		newPerson() {
 
 			this.accessoriesType = this.randomPick(AvatarProps.accessoriesType);
@@ -119,30 +147,26 @@ export default {
 			this.mouthType = this.randomPick(AvatarProps.mouthType);
 			this.skinColor = this.randomPick(AvatarProps.skinColor);
 			this.topType = this.randomPick(AvatarProps.topType);
-
+		
 		},
-
 		randomNumberRange(Min, Max) {
 
 			return Math.floor(Math.random() * (Max - Min + 1)) + Min;
-
+		
 		},
-
 		randomPick(array) {
 
 			const index = this.randomNumberRange(0, array.length);
 
 			return array[index];
-
+		
 		}
-
 	}
 };
 </script>
-
 <style>
 .customHeader {
 	height: calc((100vh / 3));
-	min-height: 300px;
+	min-height: 460px;
 }
 </style>

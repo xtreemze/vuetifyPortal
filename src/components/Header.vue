@@ -5,10 +5,8 @@
 			/>
 	</header>
 </template>
-
 <script>
 import Avatar from "./Avatar";
-
 export default {
 	name: "Header",
 	components: { Avatar}

@@ -7,7 +7,6 @@ export const accessoriesType = [
 	// "Sunglasses",
 	// "Wayfarers"
 ];
-
 export const clotheType = [
 	"BlazerShirt",
 	"BlazerSweater"
@@ -19,7 +18,6 @@ export const clotheType = [
 	// "ShirtScoopNeck",
 	// "ShirtVNeck"
 ];
-
 export const eyebrowType = [
 	// "Angry",
 	// "AngryNatural",
@@ -34,7 +32,6 @@ export const eyebrowType = [
 	// "UpDown",
 	// "UpDownNatural"
 ];
-
 export const eyeType = [
 	// "Close",
 	// "Cry",
@@ -49,7 +46,6 @@ export const eyeType = [
 	// "Wink"
 	// "WinkWacky"
 ];
-
 export const facialHairColor = [
 	"Auburn",
 	"Black",
@@ -62,7 +58,6 @@ export const facialHairColor = [
 	"Red",
 	"SilverGray"
 ];
-
 export const facialHairType = [
 	"Blank"
 	// "BeardMedium",
@@ -71,7 +66,6 @@ export const facialHairType = [
 	// "MoustacheFancy",
 	// "MoustacheMagnum"
 ];
-
 export const mouthType = [
 	// "Concerned",
 	"Default",
@@ -86,7 +80,6 @@ export const mouthType = [
 	"Twinkle"
 	// "Vomit"
 ];
-
 export const skinColor = [
 	// "Tanned",
 	// "Yellow",
@@ -96,7 +89,6 @@ export const skinColor = [
 	"DarkBrown",
 	"Black"
 ];
-
 export const topType = [
 	// "NoHair",
 	// "Eyepatch",

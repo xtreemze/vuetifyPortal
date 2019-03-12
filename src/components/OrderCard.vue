@@ -1,7 +1,7 @@
 <template>
 	<VCard
 		class="orderCard"
-		color="info"
+		:color="existingActivationDate? 'primary': 'info'"
 		flat
 		>
 		<VContainer
@@ -14,7 +14,7 @@
 				row
 				>
 				<VFlex
-					grow
+					xs6
 					py-3
 					my-3
 					ml-4
@@ -48,275 +48,263 @@
 						</VLayout>
 						<VLayout
 							column
-							align-end
+							align-center
 							>
 							<VFlex
-
 								class="font-weight-medium pr-2 mr-0"
 								>
 								{{ price }} <small class="caption font-weight-light">
-									SEK monthly
+									{{ $t("sekMonthly") }}
 								</small>
 							</VFlex>
 							<VFlex
+								v-if="!activatedSubscription"
 								class="font-weight-medium pr-1 mr-3"
 								>
 								{{ setupFee }} <small class="caption font-weight-light nudge">
-									SEK setup
+									{{ $t("sekSetup") }}
 								</small>
 							</VFlex>
+							<VFlex
+								v-if="activatedSubscription"
+								class="font-weight-medium"
+								v-text="provider"
+								/>
+							<VFlex
+								class="font-weight-light"
+								v-text="serviceAddress"
+								/>
 						</VLayout>
 					</VLayout>
 				</VFlex>
-				<VBtn
-					ma-0
-					pa-0
-					flat
-					class="cardHover"
-					@click.stop="toggled = !toggled"
+				<VFlex
+					xs6
 					>
-					<VIcon>
-						{{ toggled ? 'keyboard_arrow_left' : 'keyboard_arrow_right' }}
-					</VIcon>
-				</VBtn>
-				<VSlideXTransition>
-					<VFlex
-						v-show="toggled"
-						shrink
+					<VContainer
+						fill-height
+						fluid
 						>
-						<VContainer
-							fill-height
-							ma-0
-							pa-0
-							fluid
+						<VLayout
+							column
+							justify-space-around
+							align-center
 							>
-							<VLayout
-								column
-								justify-space-around
-								align-start
+							<VTextField
+								v-if="terminationDate.length > 0 || activatedSubscription"
+								v-model="activationDate"
+								outline
+								hide-details
+								disabled
+								:label="$t('activation')"
+								prepend-inner-icon="power"
+								/>
+							<VDialog
+								v-else
+								ref="activationDateDialog"
+								v-model="activationDateModal"
+								persistent
+								min-width="300"
+								max-width="400"
+								transition="slide-y-reverse-transition"
 								>
-								<VBtn
-									v-if="terminationDate.length > 0"
-									flat
-									disabled
+								<VTextField
+									slot="activator"
+									v-model="activationDate"
+									outline
+									hide-details
+									:label="$t('activation')"
+									prepend-inner-icon="power"
+									/>
+								<VDatePicker
+									v-model="activationDateModel"
+									type="date"
+									scrollable
+									color="success"
+									:min="new Date().toISOString().substr(0, 10)"
+									full-width
 									>
-									<span class="caption">
-										{{ activationDate ? activationDate : 'Activation' }}
-									</span>
-								</VBtn>
-								<VDialog
-									v-else
-									ref="activationDateDialog"
-									v-model="activationDateModal"
-									persistent
-									min-width="300"
-									max-width="400"
-									transition="slide-y-reverse-transition"
+									<VLayout
+										column
+										align-center
+										>
+										<VFlex>
+											<small class="grey--text">
+												{{ $t("pickSubscriptionStart") }}
+											</small>
+										</VFlex>
+										<VFlex>
+											<VBtn
+												flat
+												block
+												large
+												color="success"
+												@click="activationDate = activationDateModel; activationDateModal = false; emitDates()"
+												>
+												{{ $t("setActivationDate") }}
+											</VBtn>
+										</VFlex>
+									</VLayout>
+								</VDatePicker>
+							</VDialog>
+							<VDialog
+								ref="terminationDateDialog"
+								v-model="terminationDateModal"
+								min-width="300"
+								max-width="400"
+								transition="slide-y-reverse-transition"
+								>
+								<VTextField
+									slot="activator"
+									v-model="terminationDate"
+									outline
+									:disabled="activationDate.length === 0"
+									hide-details
+									:label="$t('termination')"
+									prepend-inner-icon="power_off"
+									/>
+								<VDatePicker
+									v-model="terminationDateModel"
+									scrollable
+									type="date"
+									color="error"
+									:min="minimumTerminationDate()"
+									full-width
 									>
-									<VBtn
-										slot="activator"
-										v-model="activationDateModel"
-										grow
-										flat
-										@click="calendarDisplayed()"
+									<VLayout
+										row
+										wrap
+										align-center
+										justify-center
 										>
-										<span class="caption">
-											{{ activationDate ? activationDate : 'Activation' }}
-										</span>
-									</VBtn>
-
-									<VDatePicker
-										v-model="activationDateModel"
-										type="date"
-										scrollable
-										color="success"
-										:min="new Date().toISOString().substr(0, 10)"
-										full-width
-										>
-										<VLayout
-											column
-											align-center
-											>
-											<VFlex>
-												<small class="grey--text">
-													Pick the day when your subscription should start.
-												</small>
-											</VFlex>
-											<VFlex>
-												<VBtn
-													flat
-													block
-
-													large
-													color="success"
-													@click="activationDate = activationDateModel; terminationDateModel = minimumTerminationDate(); activationDateModal = false; toggleCard(); calendarDisplayed()"
-													>
-													Set activation date
-												</VBtn>
-											</VFlex>
-										</VLayout>
-									</VDatePicker>
-								</VDialog>
-								<VBtn
-									v-if="activationDate.length === 0"
-									grow
-									disabled
-									flat
-									>
-									<span class="caption">
-										{{ terminationDate ? terminationDate : 'Termination' }}
-									</span>
-								</VBtn>
-								<VDialog
-									v-else
-									ref="terminationDateDialog"
-									v-model="terminationDateModal"
-									min-width="300"
-									max-width="400"
-									transition="slide-y-reverse-transition"
-									>
-									<VBtn
-										slot="activator"
-										v-model="terminationDateModel"
-										grow
-										flat
-										small
-										@click="calendarDisplayed()"
-										>
-										<span class="caption">
-											{{ terminationDate ? terminationDate : 'Termination' }}
-										</span>
-									</VBtn>
-
-									<VDatePicker
-										v-model="terminationDateModel"
-										type="date"
-										scrollable
-										color="error"
-										:min="minimumTerminationDate()"
-										full-width
-										>
-										<VLayout
-											row
-											wrap
-											align-center
-											justify-center
-											>
-											<VFlex shrink>
-												<small class="grey--text">
-													Select a day when your subscription should end or press 'Indefinite' to keep your subscription activated.
-												</small>
-											</VFlex>
-											<VFlex>
-												<VBtn
-													large
-													block
-													flat
-													@click="terminationDate = ''; terminationDateModal = false; toggleCard(); calendarDisplayed();"
-													>
-													Indefinite
-												</VBtn>
-											</VFlex>
-											<VFlex>
-												<VBtn
-													large
-													block
-													flat
-													color="error"
-													@click="terminationDate = terminationDateModel; terminationDateModal = false; toggleCard(); calendarDisplayed();"
-													>
-													Set termination date
-												</VBtn>
-											</VFlex>
-										</VLayout>
-									</VDatePicker>
-								</VDialog>
-							</VLayout>
-						</VContainer>
-					</VFlex>
-				</VSlideXTransition>
+										<VFlex shrink>
+											<small class="grey--text">
+												{{ $t("terminationCardDescription") }}
+											</small>
+										</VFlex>
+										<VFlex>
+											<VBtn
+												large
+												block
+												flat
+												@click="terminationDate = ''; terminationDateModel = terminationDate; terminationDateModal = false; emitDates();"
+												>
+												{{ $t("indefinite") }}
+											</VBtn>
+										</VFlex>
+										<VFlex>
+											<VBtn
+												large
+												:disabled="!terminationDateModel"
+												block
+												flat
+												color="error"
+												@click="terminationDate = terminationDateModel; terminationDateModal = false; emitDates();"
+												>
+												{{ $t("setTerminationDate") }}
+											</VBtn>
+										</VFlex>
+									</VLayout>
+								</VDatePicker>
+							</VDialog>
+						</VLayout>
+					</VContainer>
+				</VFlex>
 			</VLayout>
 		</VContainer>
 	</VCard>
 </template>
-
 <script>
-
 export default {
 	name: "OrderCard",
 	props: {
 		id: { type: String, default: '' },
 		name: { type: String, default: null },
-		bandwidth: { type: Number, default: null },
+		bandwidth: { type: Object, default: null },
 		channels: { type: Number, default: null },
 		description: { type: String, default: null },
 		price: { type: Number, default: null },
 		setupFee: { type: Number, default: null },
-		picture: { type: String, default: null },
 		providerLogo: { type: String, default: null },
 		provider: { type: String, default: null },
-		link: { type: String, default: null },
-		multiCategory: { type: Array, default: null }
+		serviceAddress: { type: String, default: null },
+		multiCategory: { type: Array, default: null },
+		existingActivationDate: { type: String, default: null },
+		existingTerminationDate: { type: String, default: null }
 	},
 	data: () => ({
-		toggled: false,
-		activationDateModal: false,
-		terminationDateModal: false,
+		activatedSubscription: false,
+		activationDateModal: false, // whether the activation date modal is currently displaying
+		terminationDateModal: false, // whether the termination date modal is currently displaying
 		activationDateModel: new Date().toISOString()
-			.substr(0, 10),
-		terminationDateModel: '',
-		activationDate: '',
-		terminationDate: ''
-
+			.substr(0, 10), // default date for activation model
+		terminationDateModel: new Date(new Date().getTime() + (86400001 * 30)).toISOString()
+			.substr(0, 10), // empty default for termination model
+		activationDate: '', // final activation date
+		terminationDate: '' // final termination date
 	}),
-	created() {
+	created () {
 
-		this.calendarDisplayed();
+		if ( !this.existingActivationDate) {
 
-		this.activationDateModal = true;
+			this.emitDates();
+			this.activationDateModal = true;
+		
+		} else {
 
-		this.toggled = true;
+			this.activatedSubscription = true;
+			this.activationDate = this.existingActivationDate;
+			if (this.existingTerminationDate) {
 
+				this.terminationDate = this.existingTerminationDate;
+			
+			}
+		
+		}
+	
 	},
-
 	methods: {
+		minimumTerminationDate () {
 
-		minimumTerminationDate() {
+			// determines the minimum termination date, set to be 30 days from today
+			let activation;
 
-			const activation = new Date(this.activationDate).getTime();
+			if (this.activationDate){
+
+				activation = new Date(this.activationDate).getTime();
+			
+			}
+			else {
+
+				activation = new Date().getTime();
+			
+			}
 			const millisecondDay = 86400000;
 			const noticeDate = activation + (millisecondDay * 30);
-
-			return new Date(noticeDate).toISOString()
+			const result = new Date(noticeDate).toISOString()
 				.substr(0, 10);
 
+			return result;
+		
 		},
-		calendarDisplayed() {
+		emitDates () {
 
+			// saves the dates by emmiting this to the Iterator compontent
 			if (this.activationDateModal === true || this.terminationDateModal === true) {
 
 				this.$emit('change', true);
 				this.$emit('input', this.id, this.activationDate, this.terminationDate);
-
+			
 			} else {
 
 				this.$emit('change', false);
 				this.$emit('input', this.id, this.activationDate, this.terminationDate);
-
+			
 			}
-
-		},
-		toggleCard() {
-
-			this.toggled = !this.toggled;
-
+		
 		}
-
 	}
-
 };
 </script>
-
 <style>
 .cardHover {
 	height: initial;
@@ -326,7 +314,7 @@ export default {
 	margin-left: 0;
 	margin-right: 4px;
 }
-.nudge{
+.nudge {
 	margin-right: 1.6px;
 }
 </style>

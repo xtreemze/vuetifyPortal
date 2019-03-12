@@ -55,18 +55,17 @@
 								<VFlex grow>
 									<h3>
 										<small class="caption">
-											total monthly rate
+											{{ $t("totalMonthlyRate") }}
 										</small>
-										&nbsp;
+									&nbsp;
 									</h3>
 								</VFlex>
-
 								<VFlex grow>
 									<h3>
 										<small class="caption">
-											total setup fee
+											{{ $t("totalSetupFee") }}
 										</small>
-										&nbsp;
+									&nbsp;
 									</h3>
 								</VFlex>
 							</VLayout>
@@ -77,11 +76,11 @@
 		</VContainer>
 	</VFlex>
 </template>
-
 <script>
 export default {
 	name: "ShoppingCart",
 	props: {
+		totalItems: { type: Number, default: 0 },
 		title: { type: String, default: '' },
 		totalCost: { type: String, default: '' },
 		totalSetupFee: { type: String, default: '' },

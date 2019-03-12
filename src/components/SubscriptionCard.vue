@@ -10,7 +10,6 @@
 					<VFlex>
 						{{ name }}
 					</VFlex>
-
 					<VFlex
 						pt-1
 						pb-0
@@ -20,15 +19,15 @@
 							{{ price }}
 						</span>
 						<span class="caption ml-0">
-							SEK/mo 		<span class=" ml-2 title font-weight-bold">
+							{{ $t('sekMo') }}
+							<span class=" ml-2 title font-weight-bold">
 								{{ setupFee }}
 								<span class="caption ml-0">
-									setup
+									{{ $t('setup') }}
 								</span>
 							</span>
 						</span>
 					</VFlex>
-
 					<VFlex xs12>
 						<VLayout
 							row
@@ -50,7 +49,6 @@
 							</VFlex>
 						</VLayout>
 					</VFlex>
-
 					<VFlex shrink>
 						<h6
 							class="grey--text text--lighten-2"
@@ -59,37 +57,41 @@
 								small
 								:color="multiCategory.includes('internet')? '' : 'transparent' "
 								>
-								slow_motion_video
+								arrow_upward
 							</VIcon>
-
-							{{ multiCategory.includes('internet') ? bandwidth + ' Mbps': "&nbsp;" }}
+							{{ multiCategory.includes('internet') ? bandwidth.up + ' Mbps': "&nbsp;" }}
+							<VIcon
+								small
+								:color="multiCategory.includes('internet')? '' : 'transparent' "
+								>
+								arrow_downward
+							</VIcon>
+							{{ multiCategory.includes('internet') ? bandwidth.down + ' Mbps': "&nbsp;" }}
 						</h6>
 					</VFlex>
 				</VCardTitle>
 			</VFlex>
-
 			<VSlideYReverseTransition>
 				<VCardText
 					v-show="showDescription"
 					class="caption secondary lighten-1  grey--text text--lighten-2 v-card--reveal cardDescription"
 					>
 					<p>
-						Provided by: {{ provider }}
+						{{ $t('providedBy') }}: {{ provider }}
 					</p>
 					<p>
 						{{ description }}
 					</p>
 					<p>
-						Available to: <VIcon
+						{{ $t('availableTo') }}: <VIcon
 							small
 							>
 							{{ subscriptionTypeIcon() }}
-						</VIcon>{{ subscriptionType }} customers
+						</VIcon>{{ subscriptionType }} {{ $t('customers') }}
 					</p>
 				</VCardText>
 			</VSlideYReverseTransition>
 		</VResponsive>
-
 		<VCardActions>
 			<VBtn
 				flat
@@ -104,49 +106,58 @@
 					:alt="provider"
 					/>
 			</VBtn>
-
 			<VSpacer />
-
-			<VBtn
-				icon
-				flat
-				color="grey"
-				@click.stop="showDescription = !showDescription"
-				>
-				<VIcon>
-					{{ showDescription ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
-				</VIcon>
-			</VBtn>
-
-			<VBtn
-				:color="userLoggedIn? addedToCart === false ? 'primary': 'info' : 'grey'"
-				flat
-				icon
-				@click.stop="toCart()"
-				>
-				<VIcon>
-					{{ addedToCart === false ? 'add_shopping_cart' : 'shopping_cart' }}
-				</VIcon>
-			</VBtn>
+			<VTooltip bottom>
+				<template v-slot:activator="{ on }">
+					<VBtn
+						icon
+						flat
+						color="grey"
+						@click.stop="showDescription = !showDescription"
+						v-on="on"
+						>
+						<VIcon>
+							{{ showDescription ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
+						</VIcon>
+					</VBtn>
+				</template>
+				<span>{{ !showDescription? $t('showDescription')
+					: $t('hideDescription')
+				}}</span>
+			</VTooltip>
+			<VTooltip bottom>
+				<template v-slot:activator="{ on }">
+					<VBtn
+						:color="userLoggedIn? addedToCart === false ? 'primary': 'info' : 'grey'"
+						flat
+						icon
+						@click.stop="toCart()"
+						v-on="on"
+						>
+						<VIcon>
+							{{ addedToCart === false ? 'add_shopping_cart' : 'shopping_cart' }}
+						</VIcon>
+					</VBtn>
+				</template>
+				<span>{{ addedToCart === false ? $t('addToCart')
+					: $t("removeFromCart") }}</span>
+			</VTooltip>
 		</VCardActions>
 	</VCard>
 </template>
-
 <script>
-
 export default {
 	name: "SubscriptionCard",
 	model: { prop: 'selectedArray', event: 'change' },
-
 	props: {
-		userLoggedIn: { type: Boolean, default: null },
-		selectedArray: { type: Boolean, default: null },
-		subscriptionType: { type: String, default: null },
-		addedToCart: { type: Boolean, default: false },
+		userLoggedIn: { type: Boolean, default: null }, // whether there is any user logged in
+		selectedArray: { type: Boolean, default: null }, // all subscriptions that are currently added to the shopping cart
+		subscriptionType: { type: String, default: null }, // specifies a private or business subscription
+		addedToCart: { type: Boolean, default: false }, // whether this subscription has been added to the shopping cart
 		id: { type: String, default: '' },
 		selected: { type: String, default: '' },
 		name: { type: String, default: null },
-		bandwidth: { type: Number, default: null },
+		bandwidth: { type: Object, default: null },
 		channels: { type: Number, default: null },
 		description: { type: String, default: null },
 		price: { type: Number, default: null },
@@ -155,7 +166,7 @@ export default {
 		providerLogo: { type: String, default: null },
 		provider: { type: String, default: null },
 		link: { type: String, default: null },
-		multiCategory: { type: Array, default: null }
+		multiCategory: { type: Array, default: null } // the category of services offered as part of the subscription
 	},
 	data: () => {
 
@@ -163,65 +174,57 @@ export default {
 			showDescription: false,
 			toggled: false
 		};
-
+	
 	},
 	methods: {
-		subscriptionTypeIcon() {
+		subscriptionTypeIcon () {
 
 			if (this.subscriptionType === 'private') {
 
-				return 'home'
-				;
-
+				return 'home';
+			
 			}
 			if (this.subscriptionType === 'company') {
 
-				return 'business'
-				;
-
+				return 'business';
+			
 			}
-
+		
 		},
-		toCart() {
+		toCart () {
 
 			if (this.userLoggedIn === false) {
 
 				this.$emit('error', true);
-
+			
 			}
 			else if (this.addedToCart === true) {
 
 				this.showDescription = false;
 				this.$emit('change', null);
-
+			
 			} else {
 
 				this.$emit('change', true);
-
 				this.$vuetify.goTo('#cart', {
-					duration: 2000,
+					duration: 1000,
 					offset: 100,
 					easing: 'easeInOutQuint'
 				});
-
+			
 			}
-
+		
 		}
 	}
-
 };
 </script>
-
 <style>
-
 .transparent {
 	background: none;
 }
-
 .button {
 	width: 80px;
 }
-
 .v-card--reveal {
 	bottom: 0;
 	position: absolute;
@@ -229,13 +232,11 @@ export default {
 	overflow-y: auto;
 	height: 100%;
 }
-
 .greyScale {
-	filter: grayscale(72%);
+	filter: grayscale(15%);
 	/* filter: brightness(70%); */
 	/* background: grey;
 	padding: 4px;
 	border-radius: 6px; */
 }
-
 </style>
